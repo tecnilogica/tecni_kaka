@@ -13,13 +13,15 @@
 #define LEDTICK 5
 #define LEDPRESENCEEXTENDED 6
 
-#define TICKCOUNTER 3
+#define TICKCOUNTER 4
+#define PRESENCEEXTENDEDCOUNTER 30
 
 alphaNumeric myDisplay(SDIPIN, CLKPIN, LEPIN, OEPIN, NUMBER_OF_DISPLAYS);
 
 char buf [5];
 
-int tickCounter = TICKCOUNTER;
+int tickCounter = 0;
+int presenceExtendedCounter = PRESENCEEXTENDEDCOUNTER;
 
 void setup() {
   
@@ -31,7 +33,6 @@ void setup() {
   pinMode(LEDPRESENCE, OUTPUT);
   pinMode(LEDTICK, OUTPUT);
   pinMode(LEDPRESENCEEXTENDED, OUTPUT);
-  //digitalWrite(LEDPIN, HIGH);
 
 }
 
@@ -47,6 +48,10 @@ void loop () {
   int pirSensor = digitalRead(PIRPIN);
   digitalWrite(LEDPRESENCE, pirSensor);
   dataString += pirSensor == HIGH ? 1 : 0;
+  if (pirSensor == HIGH) {
+    presenceExtendedCounter = PRESENCEEXTENDEDCOUNTER;
+    digitalWrite(LEDPRESENCEEXTENDED, HIGH);
+  }
 
   // The FileSystem card is mounted at the following "/mnt/FileSystema1"
   File dataFile = FileSystem.open("/mnt/sd/datalog.txt", FILE_APPEND);
@@ -62,7 +67,11 @@ void loop () {
   sprintf (buf, "%04i", methaneSensor);
   myDisplay.scroll(buf, 0);
 
-  if (--tickCounter==0) {
+  if (--presenceExtendedCounter<=0) {
+    digitalWrite(LEDPRESENCEEXTENDED, LOW);
+  }
+
+  if (--tickCounter<=0) {
     digitalWrite(LEDTICK, HIGH);
     delay(50);
     digitalWrite(LEDTICK, LOW);
