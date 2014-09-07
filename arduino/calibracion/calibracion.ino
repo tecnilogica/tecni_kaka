@@ -9,12 +9,17 @@
 
 #define METHANEPIN 0
 #define PIRPIN 7
-#define LEDPIN 6
-#define BEACONPIN 5
+#define LEDPRESENCE 4
+#define LEDTICK 5
+#define LEDPRESENCEEXTENDED 6
+
+#define TICKCOUNTER 3
 
 alphaNumeric myDisplay(SDIPIN, CLKPIN, LEPIN, OEPIN, NUMBER_OF_DISPLAYS);
 
 char buf [5];
+
+int tickCounter = TICKCOUNTER;
 
 void setup() {
   
@@ -23,8 +28,9 @@ void setup() {
 
   Serial.begin(9600);
   
-  pinMode(LEDPIN, OUTPUT);
-  pinMode(BEACONPIN, OUTPUT);
+  pinMode(LEDPRESENCE, OUTPUT);
+  pinMode(LEDTICK, OUTPUT);
+  pinMode(LEDPRESENCEEXTENDED, OUTPUT);
   //digitalWrite(LEDPIN, HIGH);
 
 }
@@ -39,7 +45,7 @@ void loop () {
   dataString += String(methaneSensor) + " ";
   
   int pirSensor = digitalRead(PIRPIN);
-  digitalWrite(LEDPIN, pirSensor);
+  digitalWrite(LEDPRESENCE, pirSensor);
   dataString += pirSensor == HIGH ? 1 : 0;
 
   // The FileSystem card is mounted at the following "/mnt/FileSystema1"
@@ -56,10 +62,15 @@ void loop () {
   sprintf (buf, "%04i", methaneSensor);
   myDisplay.scroll(buf, 0);
 
-  digitalWrite(BEACONPIN, HIGH);
-  delay(50);
-  digitalWrite(BEACONPIN, LOW);
-  delay(950);
+  if (--tickCounter==0) {
+    digitalWrite(LEDTICK, HIGH);
+    delay(50);
+    digitalWrite(LEDTICK, LOW);
+    delay(950);
+    tickCounter = TICKCOUNTER;
+  } else {
+    delay(1000);
+  }
 
 }
 
