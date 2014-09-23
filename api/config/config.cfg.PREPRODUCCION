@@ -1,0 +1,13 @@
+[globals]
+
+;Base de datos
+DBConnectString = "mysql:host=10.0.0.6;port=3306;dbname=tecnikaka"
+DBUser = "root"
+DBPassword =  "m0chu3lo"
+
+;Debug
+DEBUG = 3
+
+
+
+[routes]
