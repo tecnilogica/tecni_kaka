@@ -1,5 +1,7 @@
 <?php
 
+
+
 // CARGA LA LIBRERÍA BASE
 $f3=require('lib/fatfree/base.php');
 
@@ -49,6 +51,10 @@ $f3->set('DB', new \DB\SQL($f3->get('DBConnectString'),
 $db = $f3->get('DB');
 
 $web = \Web::instance();
+
+// Metano data
+$f3->route('GET    /stadistic' , 'Stadistic->getStadistics'); 
+$f3->route('POST    /stadistic' , 'Stadistic->addStadistic'); 
 
 
 $f3->run();
